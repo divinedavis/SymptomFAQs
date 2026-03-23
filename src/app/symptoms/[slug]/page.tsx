@@ -92,8 +92,65 @@ export default async function SymptomPage({
     .map((s) => getSymptomBySlug(s))
     .filter(Boolean);
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'MedicalWebPage',
+    name: symptom.name,
+    description: symptom.summary,
+    url: `http://159.203.110.79/symptoms/${symptom.slug}`,
+    about: {
+      '@type': 'MedicalCondition',
+      name: symptom.name,
+      possibleTreatment: symptom.seeDoctorIf?.join(', '),
+    },
+    mainContentOfPage: {
+      '@type': 'WebPageElement',
+      cssSelector: 'main',
+    },
+  };
+
+  const faqJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: `What causes ${symptom.name.toLowerCase()}?`,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: symptom.causes.map(c => c.name).join(', '),
+        },
+      },
+      {
+        '@type': 'Question',
+        name: `When should I see a doctor for ${symptom.name.toLowerCase()}?`,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: symptom.seeDoctorIf?.join(' ') || 'Consult a doctor if symptoms persist or worsen.',
+        },
+      },
+      ...(symptom.emergencyIf?.length ? [{
+        '@type': 'Question',
+        name: `Is ${symptom.name.toLowerCase()} an emergency?`,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: `Seek emergency care if: ${symptom.emergencyIf.join(' ')}`,
+        },
+      }] : []),
+    ],
+  };
+
   return (
     <div className="max-w-3xl mx-auto px-4 py-10 space-y-10">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+
       {/* Breadcrumb */}
       <nav className="flex items-center gap-1.5 text-sm text-slate-400">
         <Link href="/" className="hover:text-slate-600 transition-colors">
