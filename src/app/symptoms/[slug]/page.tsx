@@ -224,6 +224,40 @@ export default async function SymptomPage({
         </section>
       )}
 
+
+      {/* FAQ Section */}
+      <section className="mt-8">
+        <h2 className="text-xl font-semibold text-slate-800 mb-4">Frequently Asked Questions</h2>
+        <div className="space-y-4">
+          <div className="border border-slate-200 rounded-lg p-4">
+            <h3 className="font-medium text-slate-800">What are the most common causes of {symptom.name.toLowerCase()}?</h3>
+            <p className="text-slate-600 mt-2 text-sm">
+              The most common causes include {symptom.causes.filter(c => c.likelihood === "very-common" || c.likelihood === "common").map(c => c.name).join(", ")}.
+            </p>
+          </div>
+          <div className="border border-slate-200 rounded-lg p-4">
+            <h3 className="font-medium text-slate-800">When should I see a doctor for {symptom.name.toLowerCase()}?</h3>
+            <p className="text-slate-600 mt-2 text-sm">
+              See a doctor if: {symptom.seeDoctorIf?.slice(0, 3).join("; ")}.
+            </p>
+          </div>
+          {symptom.emergencyIf && symptom.emergencyIf.length > 0 && (
+            <div className="border border-red-200 rounded-lg p-4 bg-red-50">
+              <h3 className="font-medium text-red-800">Is {symptom.name.toLowerCase()} ever an emergency?</h3>
+              <p className="text-red-700 mt-2 text-sm">
+                Yes — seek emergency care if: {symptom.emergencyIf.slice(0, 2).join("; ")}.
+              </p>
+            </div>
+          )}
+          <div className="border border-slate-200 rounded-lg p-4">
+            <h3 className="font-medium text-slate-800">How do I relieve {symptom.name.toLowerCase()} at home?</h3>
+            <p className="text-slate-600 mt-2 text-sm">
+              {symptom.causes[0]?.whatToDo} For persistent symptoms, consult a healthcare provider.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* Related Symptoms */}
       {relatedData.length > 0 && (
         <section className="space-y-3">
