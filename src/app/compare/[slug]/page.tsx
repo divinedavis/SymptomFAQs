@@ -7,14 +7,16 @@ export function generateStaticParams() {
   return comparisons.map(c => ({ slug: c.slug }))
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
-  const c = getComparison(params.slug)
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const c = getComparison(slug)
   if (!c) return {}
   return { title: `${c.title}: How to Tell the Difference`, description: c.description }
 }
 
-export default function ComparisonPage({ params }: { params: { slug: string } }) {
-  const c = getComparison(params.slug)
+export default async function ComparisonPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const c = getComparison(slug)
   if (!c) notFound()
 
   return (
